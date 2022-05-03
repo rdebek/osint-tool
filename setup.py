@@ -11,6 +11,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pwn_check = osint_tool.main:pwn_check',
+            'site_report = osint_tool.main:site_report',
         ],
     },
 )
