@@ -1,6 +1,7 @@
 import click
 from osint_tool.data_fetching.hibp import Hibp
 from osint_tool.data_fetching.netcraft import Netcraft
+from osint_tool.data_fetching.shodan import Shodan
 
 
 @click.command()
@@ -19,3 +20,5 @@ def site_report(url):
     netcraft.get_subdomains()
     netcraft.get_site_report()
     netcraft.get_site_technologies()
+    shodan = Shodan()
+    shodan.get_report_by_ip(netcraft.get_ip_from_url())

@@ -13,10 +13,12 @@ class Hibp:
         options = Options()
         options.add_argument('--headless')
         options.add_argument(
-            "user-agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "user-agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, "
+            "like Gecko) "
             "Chrome/84.0.4147.125 Safari/537.36")
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        self.driver = webdriver.Chrome(ChromeDriverManager(log_level=0).install(), chrome_options=options)
+        self.driver = webdriver.Chrome(ChromeDriverManager(log_level=0).install(),
+                                       chrome_options=options)
 
     def check_if_pwned(self, email: str) -> str:
         self.driver.get(BASE_URL)

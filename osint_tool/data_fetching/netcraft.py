@@ -6,6 +6,9 @@ from click import echo
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 SUBDOMAINS_URL = 'https://searchdns.netcraft.com/'
@@ -60,7 +63,9 @@ class Netcraft:
 
     def gather_technologies(self) -> List[Tuple]:
         technolgies_data = []
-        tech_list = self.driver.find_element(By.CLASS_NAME, value='technology_list')
+        element_present = EC.presence_of_element_located((By.CLASS_NAME, 'technology_list'))
+        tech_list = WebDriverWait(self.driver, 5).until(element_present)
+        # tech_list = self.driver.find_element(By.CLASS_NAME, value='technology_list')
         table_bodys = tech_list.find_elements(By.TAG_NAME, value='tbody')
         for body in table_bodys:
             table_data = body.find_elements(By.TAG_NAME, value='td')
@@ -126,10 +131,12 @@ class Netcraft:
         return number_of_subdomains_found, headers[1: -1], structured_data
 
     def get_domain_name(self) -> str:
-        modified_url = ''
-        if 'http' in self.url:
-            modified_url = self.url[self.url.find('/') + 2:]
+        modified_url = self.url
+
+        if 'http' in modified_url:
+            modified_url = modified_url[modified_url.find('/') + 2:]
         dot_indexes = [m.start() for m in re.finditer('\\.', modified_url)]
+
         return modified_url[dot_indexes[-2]:] if len(dot_indexes) >= 2 else modified_url
 
     @staticmethod
@@ -161,3 +168,7 @@ class Netcraft:
             if header:
                 return_str += f'{header}: {data_row}\n'
         return return_str
+
+    def get_ip_from_url(self) -> str:
+        self.driver.get(SITE_REPORT_URL.format(url=self.url))
+        return self.driver.find_element(By.ID, value='ip_address').text
