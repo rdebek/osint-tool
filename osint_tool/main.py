@@ -18,3 +18,4 @@ def site_report(url):
     click.echo('Checking page info...')
     netcraft.get_subdomains()
     netcraft.get_site_report()
+    netcraft.get_site_technologies()
