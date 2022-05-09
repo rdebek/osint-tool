@@ -1,8 +1,9 @@
+from typing import List
+
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from typing import List
 
 BASE_URL = 'https://whatismyipaddress.com/breach-check'
 

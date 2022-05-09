@@ -14,8 +14,7 @@ def pwn_check(email):
 @click.command()
 @click.argument('url')
 def site_report(url):
+    netcraft = Netcraft(url)
     click.echo('Checking page info...')
-    click.echo('Looking for subdomains...')
-    click.echo(Netcraft().get_subdomains(url))
-
-
+    netcraft.get_subdomains()
+    netcraft.get_site_report()
