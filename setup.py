@@ -12,6 +12,7 @@ setup(
         'console_scripts': [
             'pwn_check = osint_tool.main:pwn_check',
             'site_report = osint_tool.main:site_report',
+            'person_report = osint_tool.main:person_report',
         ],
     },
 )

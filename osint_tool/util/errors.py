@@ -1,0 +1,2 @@
+class NoLinkedinProfileFound(Exception):
+    pass

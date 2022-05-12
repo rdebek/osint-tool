@@ -2,6 +2,7 @@ import click
 from osint_tool.data_fetching.hibp import Hibp
 from osint_tool.data_fetching.netcraft import Netcraft
 from osint_tool.data_fetching.shodan import Shodan
+from osint_tool.data_fetching.linkedin import Linkedin
 
 
 @click.command()
@@ -22,3 +23,10 @@ def site_report(url):
     netcraft.get_site_technologies()
     shodan = Shodan()
     shodan.get_report_by_ip(netcraft.get_ip_from_url())
+
+
+@click.command()
+@click.argument('person')
+def person_report(person):
+    click.echo('Performing Linkedin lookup...')
+    Linkedin().get_person_report(person)
