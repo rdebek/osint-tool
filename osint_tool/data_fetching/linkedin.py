@@ -1,11 +1,13 @@
 import json
 from collections import defaultdict
 from os import environ
-from osint_tool.util.file_handler import FileHandler
-from click import echo, prompt, confirm
-from linkedin_api import Linkedin as linkedin_api
 from typing import List, Tuple
+
+from click import confirm, echo, prompt
+from linkedin_api import Linkedin as linkedin_api
+
 from osint_tool.util.errors import NoLinkedinProfileFound
+from osint_tool.util.file_handler import FileHandler
 
 LINKEDIN_LOGIN = environ.get('LINKEDIN_LOGIN')
 LINKEDIN_PASS = environ.get('LINKEDIN_PASS')
@@ -21,10 +23,11 @@ class Linkedin:
         try:
             profile_id = self.get_profile_id(person, info_dict)
         except NoLinkedinProfileFound:
-            return echo(f'No linkedin profile found for {person}.')
+            echo(f'No linkedin profile found for {person}.')
+            return
         profile_info = self.get_profile_info(profile_id)
         profile_info_formatted = self.format_profile_info(profile_info)
-        self.file_handler.save_person_linkedin_info(person, profile_info_formatted)
+        self.file_handler.save_person_info(person, profile_info_formatted, 'linkedin')
         echo(profile_info_formatted)
         self.handle_companies_info(self.get_companies(profile_info))
 
@@ -47,9 +50,11 @@ class Linkedin:
     def handle_companies_info(self, companies):
         if not companies:
             return
-        if confirm(f'Gather information about companies?'):
-            echo(f'Companies found: \n')
-            [echo(f'- {company_name}') for company_name, _ in companies]
+        if confirm('Gather information about companies?'):
+            echo('Companies found: \n')
+            for company_name, _ in companies:
+                echo(f'- {company_name}')
+
             for company, company_id in companies:
                 info = self.get_company_info(company, company_id)
                 self.format_company_info(info)
@@ -59,7 +64,8 @@ class Linkedin:
         company_info = self.api.get_company(company_id[company_id.rfind(':') + 1:])
         return defaultdict(str, company_info)
 
-    def format_company_info(self, company_info: defaultdict) -> str:
+    @staticmethod
+    def format_company_info(company_info: defaultdict) -> str:
         json.dumps(company_info, indent=2)
         return 'temp'
 
