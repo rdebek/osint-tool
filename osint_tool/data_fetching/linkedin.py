@@ -1,9 +1,10 @@
+import json
 from collections import defaultdict
 from os import environ
-
-from click import echo, prompt
+from osint_tool.util.file_handler import FileHandler
+from click import echo, prompt, confirm
 from linkedin_api import Linkedin as linkedin_api
-
+from typing import List, Tuple
 from osint_tool.util.errors import NoLinkedinProfileFound
 
 LINKEDIN_LOGIN = environ.get('LINKEDIN_LOGIN')
@@ -13,6 +14,7 @@ LINKEDIN_PASS = environ.get('LINKEDIN_PASS')
 class Linkedin:
     def __init__(self):
         self.api = linkedin_api(LINKEDIN_LOGIN, LINKEDIN_PASS)
+        self.file_handler = FileHandler()
 
     def get_person_report(self, person: str) -> None:
         info_dict = self.prompt_additional_info()
@@ -22,7 +24,9 @@ class Linkedin:
             return echo(f'No linkedin profile found for {person}.')
         profile_info = self.get_profile_info(profile_id)
         profile_info_formatted = self.format_profile_info(profile_info)
-        return echo(profile_info_formatted)
+        self.file_handler.save_person_linkedin_info(person, profile_info_formatted)
+        echo(profile_info_formatted)
+        self.handle_companies_info(self.get_companies(profile_info))
 
     def get_profile_info(self, profile_id: str) -> defaultdict:
         echo('Retrieving profile information...')
@@ -39,6 +43,33 @@ class Linkedin:
             raise NoLinkedinProfileFound
 
         return people_found[0]['public_id']
+
+    def handle_companies_info(self, companies):
+        if not companies:
+            return
+        if confirm(f'Gather information about companies?'):
+            echo(f'Companies found: \n')
+            [echo(f'- {company_name}') for company_name, _ in companies]
+            for company, company_id in companies:
+                info = self.get_company_info(company, company_id)
+                self.format_company_info(info)
+
+    def get_company_info(self, company_name: str, company_id) -> defaultdict:
+        echo(f'Gathering information about {company_name}...')
+        company_info = self.api.get_company(company_id[company_id.rfind(':') + 1:])
+        return defaultdict(str, company_info)
+
+    def format_company_info(self, company_info: defaultdict) -> str:
+        json.dumps(company_info, indent=2)
+        return 'temp'
+
+    @staticmethod
+    def get_companies(info_dict: defaultdict) -> List[Tuple]:
+        companies = []
+        for job in info_dict['experience']:
+            company_id = job['companyUrn'][job['companyUrn'].rfind(":") + 1:]
+            companies.append((job['companyName'], company_id))
+        return companies
 
     @staticmethod
     def prompt_additional_info() -> defaultdict:
@@ -63,8 +94,8 @@ class Linkedin:
             job["timePeriod"] = defaultdict(str, job["timePeriod"])
             experience_info += f'\n{job["companyName"]}\n' \
                                f'Job title: {job["title"]}\n' \
-                               f'Start date: {job["timePeriod"]["startDate"]["month"]}/' \
-                               f'{job["timePeriod"]["startDate"]["year"]}\n' \
+                               f'Start date: {job["timePeriod"]["startDate"]["month"] if job["timePeriod"]["startDate"] else "--"}/' \
+                               f'{job["timePeriod"]["startDate"]["year"] if job["timePeriod"]["startDate"] else "--"}\n' \
                                f'End date: ' \
                                f'{job["timePeriod"]["endDate"]["month"] if job["timePeriod"]["endDate"] else "--"}/' \
                                f'{job["timePeriod"]["endDate"]["year"] if job["timePeriod"]["endDate"] else "--"}\n' \
