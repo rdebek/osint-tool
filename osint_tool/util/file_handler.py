@@ -14,9 +14,14 @@ class FileHandler:
 
     def save_site_info(self, site_url: str, site_data: str, info_type: str) -> None:
         self.create_directory(f'sites/{site_url}')
-        with open(f'{self.dump_directory}/sites/{site_url}/{site_url}_{info_type}', 'a', encoding='utf-8') as f:
+        with open(f'{self.dump_directory}/sites/{site_url}/{site_url}_{info_type}.txt', 'a', encoding='utf-8') as f:
             f.write(site_data)
 
     def create_directory(self, directory_path: str) -> None:
         if not os.path.exists(f'{self.dump_directory}/{directory_path}'):
             os.makedirs(f'{self.dump_directory}/{directory_path}', exist_ok=True)
+
+    def save_pwned_email(self, pwned_email: str, pwn_info: str):
+        self.create_directory(f'pwned_emails/')
+        with open(f'{self.dump_directory}/pwned_emails/{pwned_email}.txt', 'a', encoding='utf-8') as f:
+            f.write(pwn_info)
