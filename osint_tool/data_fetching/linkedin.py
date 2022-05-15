@@ -73,8 +73,10 @@ class Linkedin:
     def get_companies(info_dict: defaultdict) -> List[Tuple]:
         companies = []
         for job in info_dict['experience']:
-            company_id = job['companyUrn'][job['companyUrn'].rfind(":") + 1:]
-            companies.append((job['companyName'], company_id))
+            job = defaultdict(str, job)
+            if job['companyUrn'] and job['companyName']:
+                company_id = job['companyUrn'][job['companyUrn'].rfind(":") + 1:]
+                companies.append((job['companyName'], company_id))
         return companies
 
     @staticmethod
@@ -89,33 +91,41 @@ class Linkedin:
     @staticmethod
     def format_profile_info(profile_info: defaultdict) -> str:
         profile_name = f'\n{profile_info["firstName"].upper()} {profile_info["lastName"].upper()}\n'
+
         general_info = "\nGENERAL INFORMATION\n"
         general_info += f"Industry: {profile_info['industryName']}\n" \
                         f"Current role: {profile_info['headline']}\n" \
                         f"Location: {profile_info['locationName']}\n" \
                         f"Summary: {profile_info['summary']}\n"
-        experience_info = "\nEXPERIENCE INFORMATION\n"
-        for job in profile_info['experience']:
-            job = defaultdict(str, job)
-            job["timePeriod"] = defaultdict(str, job["timePeriod"])
-            experience_info += f'\n{job["companyName"]}\n' \
-                               f'Job title: {job["title"]}\n' \
-                               f'Start date: {job["timePeriod"]["startDate"]["month"] if job["timePeriod"]["startDate"] else "--"}/' \
-                               f'{job["timePeriod"]["startDate"]["year"] if job["timePeriod"]["startDate"] else "--"}\n' \
-                               f'End date: ' \
-                               f'{job["timePeriod"]["endDate"]["month"] if job["timePeriod"]["endDate"] else "--"}/' \
-                               f'{job["timePeriod"]["endDate"]["year"] if job["timePeriod"]["endDate"] else "--"}\n' \
-                               f'Description:{job["description"] if job["description"] else "-----"}\n'
 
-        education_info = "\nEDUCATION INFORMATION\n"
-        for school in profile_info["education"]:
-            school = defaultdict(str, school)
-            school["timePeriod"] = defaultdict(str, school["timePeriod"])
-            education_info += f'\n{school["schoolName"]}\n' \
-                              f'Start date: {school["timePeriod"]["startDate"]["year"]}\n' \
-                              f'End date: ' \
-                              f'{school["timePeriod"]["endDate"]["year"] if school["timePeriod"]["endDate"] else "---"}\n' \
-                              f'Degree name: {school["degreeName"]}\n' \
-                              f'Field of study: {school["fieldOfStudy"]}\n'
+        if profile_info['experience']:
+            experience_info = "\nEXPERIENCE INFORMATION\n"
+            for job in profile_info['experience']:
+                job = defaultdict(str, job)
+                job["timePeriod"] = defaultdict(str, job["timePeriod"])
+                experience_info += f'\n{job["companyName"]}\n' \
+                                   f'Job title: {job["title"]}\n' \
+                                   f'Start date: {job["timePeriod"]["startDate"]["month"] if job["timePeriod"]["startDate"] else "--"}/' \
+                                   f'{job["timePeriod"]["startDate"]["year"] if job["timePeriod"]["startDate"] else "--"}\n' \
+                                   f'End date: ' \
+                                   f'{job["timePeriod"]["endDate"]["month"] if job["timePeriod"]["endDate"] else "--"}/' \
+                                   f'{job["timePeriod"]["endDate"]["year"] if job["timePeriod"]["endDate"] else "--"}\n' \
+                                   f'Description:{job["description"] if job["description"] else "-----"}\n'
+        else:
+            experience_info = ''
+
+        if profile_info['education']:
+            education_info = "\nEDUCATION INFORMATION\n"
+            for school in profile_info["education"]:
+                school = defaultdict(str, school)
+                school["timePeriod"] = defaultdict(str, school["timePeriod"])
+                education_info += f'\n{school["schoolName"]}\n' \
+                                  f'Start date: {school["timePeriod"]["startDate"]["year"]}\n' \
+                                  f'End date: ' \
+                                  f'{school["timePeriod"]["endDate"]["year"] if school["timePeriod"]["endDate"] else "---"}\n' \
+                                  f'Degree name: {school["degreeName"]}\n' \
+                                  f'Field of study: {school["fieldOfStudy"]}\n'
+        else:
+            education_info = ''
 
         return profile_name + general_info + experience_info + education_info

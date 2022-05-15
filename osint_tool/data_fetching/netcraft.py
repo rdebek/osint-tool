@@ -65,7 +65,6 @@ class Netcraft:
         technolgies_data = []
         element_present = EC.presence_of_element_located((By.CLASS_NAME, 'technology_list'))
         tech_list = WebDriverWait(self.driver, 5).until(element_present)
-        # tech_list = self.driver.find_element(By.CLASS_NAME, value='technology_list')
         table_bodys = tech_list.find_elements(By.TAG_NAME, value='tbody')
         for body in table_bodys:
             table_data = body.find_elements(By.TAG_NAME, value='td')

@@ -9,5 +9,6 @@ class FileHandler:
         if not os.path.exists(f'{self.dump_directory}/people/{person_name}'):
             os.makedirs(f'{self.dump_directory}/people/{person_name}', exist_ok=True)
 
-        with open(f'{self.dump_directory}/people/{person_name}/{person_name}_{info_source}.txt', 'a') as f:
+        with open(f'{self.dump_directory}/people/{person_name}/{person_name}_{info_source}.txt', 'a',
+                  encoding="utf-8") as f:
             f.write(person_data)

@@ -32,5 +32,5 @@ def site_report(url):
 def person_report(person):
     click.echo('Performing Linkedin lookup...')
     Linkedin().get_person_report(person)
-    click.echo('Performing Twitter lookup...')
+    click.echo('\n\nPerforming Twitter lookup...')
     Twitter().get_person_report(person)
