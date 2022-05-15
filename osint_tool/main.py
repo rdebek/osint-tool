@@ -18,13 +18,10 @@ def pwn_check(email):
 @click.command()
 @click.argument('url')
 def site_report(url):
-    netcraft = Netcraft(url)
     click.echo('Checking page info...')
-    netcraft.get_subdomains()
+    netcraft = Netcraft(url)
     netcraft.get_site_report()
-    netcraft.get_site_technologies()
-    shodan = Shodan()
-    shodan.get_report_by_ip(netcraft.get_ip_from_url())
+    Shodan().get_shodan_report(url, netcraft.get_ip_address())
 
 
 @click.command()

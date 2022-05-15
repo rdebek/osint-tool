@@ -6,10 +6,11 @@ from click import echo
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+
+from osint_tool.util.file_handler import FileHandler
 
 SUBDOMAINS_URL = 'https://searchdns.netcraft.com/'
 SITE_REPORT_URL = 'https://sitereport.netcraft.com/?url={url}'
@@ -35,33 +36,34 @@ class Netcraft:
         self.driver = webdriver.Chrome(ChromeDriverManager(log_level=0).install(),
                                        chrome_options=options)
         self.url = url
+        self.file_handler = FileHandler()
 
     def get_site_report(self) -> None:
         try:
             headers, data = self.gather_site_data()
+            site_report = self.display_site_data(headers, data)
+            self.file_handler.save_site_info(self.url, site_report, 'report')
+            echo(site_report)
         except InvalidUrlFound:
             return echo('Cannot generate site report for the provided url.')
 
-        return echo(self.display_site_data(headers, data))
-
-    def get_subdomains(self) -> None:
-        try:
-            number_of_subdomains, headers, structured_data = self.gather_subdomains()
-        except NoSubDomainsFoundException:
-            return echo('No subdomains found.')
-
-        return echo(self.display_subdomains(number_of_subdomains, headers, structured_data))
-
-    def get_site_technologies(self) -> None:
-        echo('Looking for technologies used by the site...')
-        sections = self.driver.find_elements(By.TAG_NAME, value='h2')
-        for section in sections:
+        for section in self.driver.find_elements(By.TAG_NAME, value='h2'):
             if 'Site Technology' in section.text:
                 tech_data = self.gather_technologies()
-                return echo(self.display_technologies(tech_data))
-        return echo('No technologies found.')
+                tech_data_formatted = self.display_technologies(tech_data)
+                self.file_handler.save_site_info(self.url, tech_data_formatted, 'technologies')
+                echo(tech_data_formatted)
+
+        try:
+            number_of_subdomains, headers, structured_data = self.gather_subdomains()
+            subdomains_data_formatted = self.display_subdomains(number_of_subdomains, headers, structured_data)
+            self.file_handler.save_site_info(self.url, subdomains_data_formatted, 'subdomains')
+            echo(subdomains_data_formatted)
+        except NoSubDomainsFoundException:
+            echo('No subdomains found.')
 
     def gather_technologies(self) -> List[Tuple]:
+        echo('Looking for technologies used by the site...')
         technolgies_data = []
         element_present = EC.presence_of_element_located((By.CLASS_NAME, 'technology_list'))
         tech_list = WebDriverWait(self.driver, 5).until(element_present)
@@ -148,8 +150,9 @@ class Netcraft:
     @staticmethod
     def display_subdomains(number_of_subdomains: int, headers: List[str],
                            data: List[List[str]]) -> str:
-        return_str = f'\nFound {number_of_subdomains} subdomains!\n\nShowing 20 most popular ' \
-                     f'subdomains found:\n\n'
+        return_str = ''
+        echo(f'\nFound {number_of_subdomains} subdomains!\n\nShowing 20 most popular '
+             f'subdomains found:\n')
         for j, row in enumerate(data):
             return_str += f'{j + 1}. '
             for i, column in enumerate(row):
@@ -168,6 +171,6 @@ class Netcraft:
                 return_str += f'{header}: {data_row}\n'
         return return_str
 
-    def get_ip_from_url(self) -> str:
+    def get_ip_address(self) -> str:
         self.driver.get(SITE_REPORT_URL.format(url=self.url))
         return self.driver.find_element(By.ID, value='ip_address').text
