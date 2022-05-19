@@ -1,5 +1,6 @@
 import click
 
+from osint_tool.data_fetching.google import Google
 from osint_tool.data_fetching.hibp import Hibp
 from osint_tool.data_fetching.linkedin import Linkedin
 from osint_tool.data_fetching.netcraft import Netcraft
@@ -31,3 +32,10 @@ def person_report(person):
     Linkedin().get_person_report(person)
     click.echo('\n\nPerforming Twitter lookup...')
     Twitter().get_person_report(person)
+
+
+@click.command()
+@click.argument('mail_domain')
+def gather_emails(mail_domain):
+    click.echo(f'Gathering emails from @{mail_domain}...')
+    click.echo(Google().get_emails(mail_domain))

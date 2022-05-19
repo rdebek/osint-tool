@@ -25,3 +25,8 @@ class FileHandler:
         self.create_directory(f'pwned_emails/')
         with open(f'{self.dump_directory}/pwned_emails/{pwned_email}.txt', 'a', encoding='utf-8') as f:
             f.write(pwn_info)
+
+    def save_gathered_emails(self, email_domain: str, emails: str):
+        self.create_directory(f'gathered_emails/')
+        with open(f'{self.dump_directory}/gathered_emails/{email_domain}.txt', 'a', encoding='utf-8') as f:
+            f.write(emails)

@@ -1,13 +1,11 @@
-from os import environ
 from typing import List, Union
 
 import tweepy
 from click import echo
 
+from osint_tool.util.credentials_manager import BEARER_TOKEN
 from osint_tool.util.errors import NoTwitterProfileFound
 from osint_tool.util.file_handler import FileHandler
-
-BEARER_TOKEN = environ.get('BEARER_TOKEN')
 
 
 class Twitter:

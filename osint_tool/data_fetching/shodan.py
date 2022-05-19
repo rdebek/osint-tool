@@ -1,11 +1,8 @@
-from os import environ
-
 import shodan
 from click import echo
 
+from osint_tool.util.credentials_manager import SHODAN_KEY
 from osint_tool.util.file_handler import FileHandler
-
-SHODAN_KEY = environ.get('SHODAN_KEY')
 
 
 class Shodan:

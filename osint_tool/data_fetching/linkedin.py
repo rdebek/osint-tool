@@ -1,21 +1,18 @@
 import json
 from collections import defaultdict
-from os import environ
 from typing import List, Tuple
 
 from click import confirm, echo, prompt
-from linkedin_api import Linkedin as linkedin_api
+from linkedin_api import Linkedin as LinkedinApi
 
+from osint_tool.util.credentials_manager import LINKEDIN_LOGIN, LINKEDIN_PASS
 from osint_tool.util.errors import NoLinkedinProfileFound
 from osint_tool.util.file_handler import FileHandler
-
-LINKEDIN_LOGIN = environ.get('LINKEDIN_LOGIN')
-LINKEDIN_PASS = environ.get('LINKEDIN_PASS')
 
 
 class Linkedin:
     def __init__(self):
-        self.api = linkedin_api(LINKEDIN_LOGIN, LINKEDIN_PASS)
+        self.api = LinkedinApi(LINKEDIN_LOGIN, LINKEDIN_PASS)
         self.file_handler = FileHandler()
 
     def get_person_report(self, person: str) -> None:

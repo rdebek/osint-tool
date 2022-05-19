@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='osint_tool',
@@ -13,6 +13,7 @@ setup(
             'pwn_check = osint_tool.main:pwn_check',
             'site_report = osint_tool.main:site_report',
             'person_report = osint_tool.main:person_report',
+            'gather_emails = osint_tool.main:gather_emails',
         ],
     },
 )
