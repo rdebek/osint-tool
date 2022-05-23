@@ -14,6 +14,7 @@ setup(
             'site_report = osint_tool.main:site_report',
             'person_report = osint_tool.main:person_report',
             'gather_emails = osint_tool.main:gather_emails',
+            'gather_numbers = osint_tool.main:gather_numbers',
         ],
     },
 )

@@ -1,11 +1,11 @@
 import click
 
 from osint_tool.data_fetching.google import Google
-from osint_tool.data_fetching.hibp import Hibp
 from osint_tool.data_fetching.linkedin import Linkedin
 from osint_tool.data_fetching.netcraft import Netcraft
 from osint_tool.data_fetching.shodan import Shodan
 from osint_tool.data_fetching.twitter import Twitter
+from osint_tool.data_fetching.whatsmyip import Hibp
 
 
 @click.command()
@@ -39,3 +39,11 @@ def person_report(person):
 def gather_emails(mail_domain):
     click.echo(f'Gathering emails from @{mail_domain}...')
     click.echo(Google().get_emails(mail_domain))
+    # Google().get_person_email('andrzej kowalski')
+
+
+@click.command()
+@click.argument('prefix')
+def gather_numbers(prefix):
+    click.echo(f'Gathering phone numbers with +{prefix} prefix...')
+    Google().get_phone_numbers(prefix)

@@ -30,3 +30,8 @@ class FileHandler:
         self.create_directory(f'gathered_emails/')
         with open(f'{self.dump_directory}/gathered_emails/{email_domain}.txt', 'a', encoding='utf-8') as f:
             f.write(emails)
+
+    def save_gathered_numbers(self, number_prefix: str, numbers_found: str):
+        self.create_directory(f'gathered_numbers/')
+        with open(f'{self.dump_directory}/gathered_numbers/+{number_prefix}.txt', 'a', encoding='utf-8') as f:
+            f.write(numbers_found)
