@@ -52,10 +52,7 @@ class Google:
 
     def format_emails(self, emails: set, email_domain: str):
         echo(f'Found {len(emails)} emails!')
-        return_str = ''
-        for email in emails:
-            email = self.sanitize_email(email, email_domain)
-            return_str += f'- {email}\n'
+        return_str = '\n'.join([f'- {self.sanitize_email(email, email_domain)}' for email in emails])
         return return_str
 
     # def get_person_email(self, person: str):
@@ -107,7 +104,5 @@ class Google:
     @staticmethod
     def format_numbers(numbers_array: List[str]) -> str:
         echo(f'Found {len(numbers_array)} numbers!\n')
-        return_str = ''
-        for number in numbers_array:
-            return_str += f'- {number}\n'
+        return_str = '\n'.join([f'- {number}' for number in numbers_array])
         return return_str
