@@ -56,17 +56,23 @@ class Google:
         return return_str
 
     # def get_person_email(self, person: str):
-    #     regex = '([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
+    #     regex = r'\S+@\S+'
     #     query = f'intext:"{person}" AND intext:"mail"'
     #     urls_found = search(query, num=10, stop=10, pause=2)
     #     emails_found = []
     #     for url in urls_found:
     #         page_src = requests.get(url, verify=False).text
     #         soup = BeautifulSoup(page_src, 'lxml')
-    #         emails_found.extend(soup)
-
-    # emails_found.extend(soup(text=lambda t: "@" in t))
-    # print(emails_found)
+    #         raw_emails = re.findall(regex, soup.text)
+    #         for email in raw_emails:
+    #             if '.' in email:
+    #                 emails_found.append(email)
+    #     print(emails_found)
+    #
+    # def get_person_number(self):
+    #     match_phone = r'[0-9]+'
+    #     potential_phone = '392 92858 7 56 747 2727 22'
+    #     print(re.findall(match_phone, potential_phone))
 
     def get_phone_numbers(self, number_prefix: str) -> None:
         numbers_found = self.gather_phone_numbers(number_prefix)

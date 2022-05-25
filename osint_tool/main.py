@@ -5,14 +5,14 @@ from osint_tool.data_fetching.linkedin import Linkedin
 from osint_tool.data_fetching.netcraft import Netcraft
 from osint_tool.data_fetching.shodan import Shodan
 from osint_tool.data_fetching.twitter import Twitter
-from osint_tool.data_fetching.whatsmyip import Hibp
+from osint_tool.data_fetching.whatsmyip import Whatsmyip
 
 
 @click.command()
 @click.argument('email')
 def pwn_check(email):
     click.echo('Looking for data leaks...')
-    pwnage_info = Hibp(email).check_if_pwned()
+    pwnage_info = Whatsmyip(email).check_if_pwned()
     click.echo(pwnage_info)
 
 
@@ -40,6 +40,7 @@ def gather_emails(mail_domain):
     click.echo(f'Gathering emails from @{mail_domain}...')
     click.echo(Google().get_emails(mail_domain))
     # Google().get_person_email('andrzej kowalski')
+    # Google().get_person_number()
 
 
 @click.command()

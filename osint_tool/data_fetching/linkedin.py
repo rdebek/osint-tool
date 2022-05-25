@@ -1,4 +1,3 @@
-import json
 from collections import defaultdict
 from typing import List, Tuple
 
@@ -48,23 +47,44 @@ class Linkedin:
         if not companies:
             return
         if confirm('Gather information about companies?'):
-            echo('Companies found: \n')
+            echo('Companies found:')
             for company_name, _ in companies:
                 echo(f'- {company_name}')
 
             for company, company_id in companies:
                 info = self.get_company_info(company, company_id)
-                self.format_company_info(info)
+                formatted_info = self.format_company_info(info)
+                echo(formatted_info)
+                self.file_handler.save_company_info(company, formatted_info)
 
     def get_company_info(self, company_name: str, company_id) -> defaultdict:
         echo(f'Gathering information about {company_name}...')
         company_info = self.api.get_company(company_id[company_id.rfind(':') + 1:])
         return defaultdict(str, company_info)
 
+    def format_company_info(self, company_info: defaultdict) -> str:
+        return_str = ''
+        locations = self.format_location_info(company_info["confirmedLocations"])
+        description = company_info["description"].replace("\n", "")
+        return_str += f'{company_info["name"]}\n' \
+                      f'Website: {company_info["callToAction"]["url"]}\n' \
+                      f'Number of employees: {company_info["staffCount"]}\n' \
+                      f'Locations: \n\n{locations}' \
+                      f'Specializes in: {", ".join(company_info["specialities"])}\n' \
+                      f'Description: {description}\n'
+        return return_str
+
     @staticmethod
-    def format_company_info(company_info: defaultdict) -> str:
-        json.dumps(company_info, indent=2)
-        return 'temp'
+    def format_location_info(locations_array: List[dict]) -> str:
+        locations_info = ''
+        for i, location in enumerate(locations_array):
+            locations_info += f'{i + 1}.\n' \
+                              f'Country: {location.get("country", "")}\n' \
+                              f'Geographic area: {location.get("geographicArea", "")}\n' \
+                              f'City: {location.get("city", "")}\n' \
+                              f'Address: ' \
+                              f'{location.get("line1", "").strip() + " " + location.get("line2", "").strip()}\n\n'
+        return locations_info
 
     @staticmethod
     def get_companies(info_dict: defaultdict) -> List[Tuple]:

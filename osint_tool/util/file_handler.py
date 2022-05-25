@@ -35,3 +35,8 @@ class FileHandler:
         self.create_directory(f'gathered_numbers/')
         with open(f'{self.dump_directory}/gathered_numbers/+{number_prefix}.txt', 'a', encoding='utf-8') as f:
             f.write(numbers_found)
+
+    def save_company_info(self, company_name: str, company_data: str):
+        self.create_directory(f'companies/')
+        with open(f'{self.dump_directory}/companies/{company_name}.txt', 'a', encoding='utf-8') as f:
+            f.write(company_data)

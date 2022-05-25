@@ -10,18 +10,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
+from osint_tool.util.errors import InvalidUrlFound, NoSubDomainsFoundException
 from osint_tool.util.file_handler import FileHandler
 
 SUBDOMAINS_URL = 'https://searchdns.netcraft.com/'
 SITE_REPORT_URL = 'https://sitereport.netcraft.com/?url={url}'
-
-
-class NoSubDomainsFoundException(Exception):
-    pass
-
-
-class InvalidUrlFound(Exception):
-    pass
 
 
 class Netcraft:
@@ -66,7 +59,7 @@ class Netcraft:
         echo('Looking for technologies used by the site...')
         technolgies_data = []
         element_present = EC.presence_of_element_located((By.CLASS_NAME, 'technology_list'))
-        tech_list = WebDriverWait(self.driver, 5).until(element_present)
+        tech_list = WebDriverWait(self.driver, 10).until(element_present)
         table_bodys = tech_list.find_elements(By.TAG_NAME, value='tbody')
         for body in table_bodys:
             table_data = body.find_elements(By.TAG_NAME, value='td')

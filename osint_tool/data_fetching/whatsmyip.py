@@ -11,7 +11,7 @@ from osint_tool.util.file_handler import FileHandler
 BASE_URL = 'https://whatismyipaddress.com/breach-check'
 
 
-class Hibp:
+class Whatsmyip:
     def __init__(self, email: str):
         options = Options()
         options.add_argument('--headless')
@@ -27,7 +27,7 @@ class Hibp:
 
     def check_if_pwned(self) -> str:
         self.driver.get(BASE_URL)
-        self.driver.find_element(By.CLASS_NAME, value='css-47sehv').click()
+        self.driver.find_element(By.CLASS_NAME, value='css-1hy2vtq').click()
         self.driver.find_element(By.ID, value='txtemail').send_keys(self.email)
         self.driver.find_element(By.ID, value='btnSubmit').click()
         if self.driver.find_element(By.ID, value='alertText').text:
@@ -47,7 +47,7 @@ class Hibp:
         echo(f'\nFound {len(breaches_info)} data breaches!')
         return_string = ''
         for i, breach in enumerate(breaches_info):
-            return_string += f'\n\n{i + 1}.'
+            return_string += f'\n{i + 1}.'
             for information_row in breach:
                 return_string += f'\n{information_row}\n'
         self.file_handler.save_pwned_email(self.email, return_string)
