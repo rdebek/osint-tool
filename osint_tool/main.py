@@ -32,6 +32,8 @@ def person_report(person):
     Linkedin().get_person_report(person)
     click.echo('\n\nPerforming Twitter lookup...')
     Twitter().get_person_report(person)
+    click.echo('Attempting to obtain e-mail addresses...')
+    Google().get_person_emails(person)
 
 
 @click.command()
@@ -39,8 +41,6 @@ def person_report(person):
 def gather_emails(mail_domain):
     click.echo(f'Gathering emails from @{mail_domain}...')
     click.echo(Google().get_emails(mail_domain))
-    # Google().get_person_email('andrzej kowalski')
-    # Google().get_person_number()
 
 
 @click.command()

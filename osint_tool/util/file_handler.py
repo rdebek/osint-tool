@@ -12,6 +12,13 @@ class FileHandler:
                   encoding="utf-8") as f:
             f.write(person_data)
 
+    def save_person_emails(self, person_name: str, person_emails: str) -> None:
+        self.create_directory(f'people/{person_name}')
+
+        with open(f'{self.dump_directory}/people/{person_name}/{person_name}_emails.txt', 'a',
+                  encoding="utf-8") as f:
+            f.write(person_emails)
+
     def save_site_info(self, site_url: str, site_data: str, info_type: str) -> None:
         self.create_directory(f'sites/{site_url}')
         with open(f'{self.dump_directory}/sites/{site_url}/{site_url}_{info_type}.txt', 'a', encoding='utf-8') as f:

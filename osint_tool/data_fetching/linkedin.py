@@ -94,7 +94,7 @@ class Linkedin:
             if job['companyUrn'] and job['companyName']:
                 company_id = job['companyUrn'][job['companyUrn'].rfind(":") + 1:]
                 companies.append((job['companyName'], company_id))
-        return companies
+        return list(set(companies))
 
     @staticmethod
     def prompt_additional_info() -> defaultdict:

@@ -55,24 +55,24 @@ class Google:
         return_str = '\n'.join([f'- {self.sanitize_email(email, email_domain)}' for email in emails])
         return return_str
 
-    # def get_person_email(self, person: str):
-    #     regex = r'\S+@\S+'
-    #     query = f'intext:"{person}" AND intext:"mail"'
-    #     urls_found = search(query, num=10, stop=10, pause=2)
-    #     emails_found = []
-    #     for url in urls_found:
-    #         page_src = requests.get(url, verify=False).text
-    #         soup = BeautifulSoup(page_src, 'lxml')
-    #         raw_emails = re.findall(regex, soup.text)
-    #         for email in raw_emails:
-    #             if '.' in email:
-    #                 emails_found.append(email)
-    #     print(emails_found)
-    #
-    # def get_person_number(self):
-    #     match_phone = r'[0-9]+'
-    #     potential_phone = '392 92858 7 56 747 2727 22'
-    #     print(re.findall(match_phone, potential_phone))
+    def get_person_emails(self, person: str) -> List[str]:
+        regex = r'\S+@\S+'
+        query = f'intext:"{person}" AND intext:"mail"'
+        urls_found = search(query, num=10, stop=10, pause=2)
+        emails_found = []
+        for url in urls_found:
+            page_src = requests.get(url, verify=False).text
+            soup = BeautifulSoup(page_src, 'lxml')
+            raw_emails = re.findall(regex, soup.text)
+            for email in raw_emails:
+                if '.' in email and person.split(' ')[1].strip().lower() in email.lower():
+                    emails_found.append(email)
+        if emails_found:
+            echo(f'Found {len(emails_found)} email addresses!')
+            emails_formatted = "\n".join([f'- {email}' for email in emails_found])
+            self.file_handler.save_person_emails(person, emails_formatted)
+            echo(emails_formatted)
+        return emails_found
 
     def get_phone_numbers(self, number_prefix: str) -> None:
         numbers_found = self.gather_phone_numbers(number_prefix)
